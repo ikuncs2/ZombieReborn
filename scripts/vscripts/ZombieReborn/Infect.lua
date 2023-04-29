@@ -24,6 +24,8 @@ function Infect(hInflictor, hInfected, bKeepPosition)
     end
     hInfected:SetOrigin(vecOrigin)
     hInfected:SetAngles(vecAngles.x, vecAngles.y, vecAngles.z)
+    
+    mp:CheckWinConditions()
 end
 
 function InfectAsync(hInfected, bKeepPosition)
@@ -44,6 +46,8 @@ function Cure(hPlayer, bKeepPosition)
     end
     hPlayer:SetOrigin(vecOrigin)
     hPlayer:SetAngles(vecAngles.x, vecAngles.y, vecAngles.z)
+
+    mp:CheckWinConditions()
 end
 
 function CureAsync(hPlayer, bKeepPosition)
@@ -147,18 +151,19 @@ function Infect_OnRoundFreezeEnd()
     Timers:CreateTimer("MZSelection_Timer", {
         callback = function()
             if MZSelection_Countdown <= 0 then
-                ScriptPrintMessageCenterAll(tr("First infection has started!"))
-                ScriptPrintMessageChatAll(tr(" \x04[Zombie:Reborn]\x01 First infection has started! Good luck, survivors!"))
+                ScriptPrintMessageCenterAll("首例感染已经开始!")
+                ScriptPrintMessageChatAll(" \x04[柑橘CS社区]\x01 首例感染已经开始! 祝你好运!")
                 Infect_PickMotherZombies()
                 Timers:RemoveTimer("MZSelection_Timer")
             elseif MZSelection_Countdown <= 15 then
                 if MZSelection_Countdown == 1 then
-                    ScriptPrintMessageCenterAll(tr("First infection in \x071 second\x01!"))
+                    ScriptPrintMessageCenterAll("首例感染将在 \x071 秒\x01后出现!")
                 else
-                    ScriptPrintMessageCenterAll(string.format(tr("First infection in \x07%s seconds\x01!"), MZSelection_Countdown))
+                    ScriptPrintMessageCenterAll(string.format("首例感染将在 \x07%s 秒\x01后出现!", MZSelection_Countdown))
                 end
                 if MZSelection_Countdown % 5 == 0 then
-                    ScriptPrintMessageChatAll(string.format(tr(" \x04[Zombie:Reborn]\x01 First infection in \x07%s seconds\x01!"), MZSelection_Countdown))
+                    ScriptPrintMessageChatAll(string.format(" \x04[柑橘CS社区]\x01 首例感染将在 \x07%s 秒\x01后出现!", MZSelection_Countdown))
+                    mp:CheckWinConditions()
                 end
             end
             MZSelection_Countdown = MZSelection_Countdown - 1

@@ -1,9 +1,10 @@
 print("Starting ZombieReborn!")
 
+require("mp")
+
 require("ZombieReborn.util.const")
 require("ZombieReborn.util.functions")
 require("ZombieReborn.util.timers")
-require("ZombieReborn.util.translate")
 
 require("ZombieReborn.Convars")
 require("ZombieReborn.Infect")
@@ -18,6 +19,14 @@ ZR_ZOMBIE_SPAWN_READY = false -- Check if first zombie is spawning
 
 Convars:SetInt("mp_autoteambalance", 0)
 Convars:SetInt("mp_limitteams", 0)
+Convars:SetBool("mp_warmup_offline_enabled", false)
+Convars:SetBool("mp_warmup_online_enabled", false)
+Convars:SetBool("mp_suicide_penalty", false)
+Convars:SetBool("mp_autokick", false)
+Convars:SetInt("mp_warmuptime", 0)
+
+mp:SearchSignatures()
+Knockback_Init()
 
 --remove duplicated listeners upon manual reload
 if tListenerIds then
@@ -50,7 +59,7 @@ function OnRoundStart(event)
     --Convars:SetInt('mp_ignore_round_win_conditions',1)
 
     --print("Enabling spawn for T")
-    ScriptPrintMessageChatAll(tr("The game is \x05Humans vs. Zombies\x01, the goal for zombies is to infect all humans by knifing them."))
+    ScriptPrintMessageChatAll("当前游戏模式是 \x05僵尸逃跑模式\x01, 僵尸的获胜目标是用刀感染所有人类.")
 
     --Setup various functions and gameplay elements
     SetAllHuman()
@@ -123,8 +132,8 @@ function OnPlayerDeath(event)
 
     --print("Disabling spawn for T")
     --Side effect: the last player infected/died doesn't respawn until the next round start
-    Convars:SetInt("mp_respawn_on_death_t", 0)
-    Convars:SetInt("mp_respawn_on_death_ct", 0)
+    --Convars:SetInt("mp_respawn_on_death_t", 0)
+    --Convars:SetInt("mp_respawn_on_death_ct", 0)
 end
 
 function OnPlayerSpawn(event)
