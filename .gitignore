@@ -54,10 +54,6 @@ cfg/*
 !cfg/listenserver.cfg
 !cfg/zr*
 
-# Scripts besides what we ship
-scripts/vscripts/*
-!scripts/vscripts/ZombieReborn*
-
 # Game Files
 *.vpk
 *.vdf
