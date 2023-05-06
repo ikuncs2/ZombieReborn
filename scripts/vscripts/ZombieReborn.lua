@@ -1,5 +1,6 @@
 print("Starting ZombieReborn!")
 
+require("filesystem")
 require("mp")
 
 require("ZombieReborn.util.const")

@@ -36,28 +36,20 @@ g_WeaponKnockback = {
     bizon = {250.0,200.0,250.0,90.0,0.0},
     p90 = {250.0,200.0,250.0,90.0,0.7}
 }
---[[
-local cio = require("cio")
+
 local cjson = require("cjson")
 
 function Knockback_Init()
-    local fp = cio.open("config/KnockbackDesc.json", "r")
-    local str = ""
-    if fp then
-        local str = fp:read("*all")
-        fp:close()
-        _G.fp =fp
-
-        local j = cjson.decode(str)
-        for _, data in ipairs(j[2].KnockbackDesc) do
-            g_WeaponKnockback[data.m_szWeaponName] = { data.m_flGround, data.m_flAir, data.m_flFly, data.m_flDuck, data.m_flVelocityModifier }
-            print(string.format("update knockback data for %s = {%s,%s,%s,%s}", data.m_szWeaponName, data.m_flGround, data.m_flAir, data.m_flFly, data.m_flDuck, data.m_flVelocityModifier))
-        end
+    local str = FS_LoadFileForMe("scripts/vscripts/config/KnockbackDesc.json")
+    local j = cjson.decode(str)
+    for _, data in ipairs(j[2].KnockbackDesc) do
+        g_WeaponKnockback[data.m_szWeaponName] = { data.m_flGround, data.m_flAir, data.m_flFly, data.m_flDuck, data.m_flVelocityModifier }
+        print(string.format("update knockback data for %s = {%s,%s,%s,%s}", data.m_szWeaponName, data.m_flGround, data.m_flAir, data.m_flFly, data.m_flDuck, data.m_flVelocityModifier))
     end
     return g_WeaponKnockback
 end
-]]
 
+--[[
 function Knockback_Init()
     local config = require("config/KnockbackDesc")
     if config then
@@ -68,7 +60,7 @@ function Knockback_Init()
     end
     return g_WeaponKnockback
 end
-
+]]
 function Knockback_Apply(hHuman, hZombie, iDamage, sWeapon)
     local iScale = 1
 
