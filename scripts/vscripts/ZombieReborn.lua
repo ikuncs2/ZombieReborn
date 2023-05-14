@@ -27,6 +27,7 @@ Convars:SetBool("mp_autokick", false)
 Convars:SetInt("mp_warmuptime", 0)
 
 mp:SearchSignatures()
+mp:InstallHooks()
 Knockback_Init()
 
 --remove duplicated listeners upon manual reload

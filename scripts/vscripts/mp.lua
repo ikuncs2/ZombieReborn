@@ -6,6 +6,12 @@ int MessageBoxA(void *w, const char *txt, const char *cap, int type);
 
 typedef struct CCSGameRules CCSGameRules;
 typedef struct CGameRulesGameSystem CGameRulesGameSystem;
+typedef struct TerminateRoundParams {
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+} TerminateRoundParams;
 ]]
 
 local sig = require("signatures")
@@ -28,21 +34,40 @@ function mp:GameRules()
     return pGameRules
 end
 
-function mp:CheckWinConditions(delay, reason)
+function mp:CheckWinConditions()
     print("Call CheckWinConditions")
     self.pfnCCSGameRules__CheckWinConditions(mp:GameRules())
 end
 
 function mp:TerminateRound(delay, reason)
     print("Call TerminateRound")
-    self.pfnCCSGameRules__TerminateRound(mp:GameRules(), delay, reason)
+    self.pfnCCSGameRules__TerminateRound(mp:GameRules(), delay, reason, 0, 0)
 end
 
 function mp:SearchSignatures()
-    self:__imp_ProcessFunction("CCSGameRules__CheckWinConditions", "void (*)(CCSGameRules *this)")
-    self:__imp_ProcessFunction("CCSGameRules__TerminateRound", "void (*)(CCSGameRules *this, float delay, int reason)")
+    self:__imp_ProcessFunction("CCSGameRules__CheckWinConditions", "void (*)(CCSGameRules *this, int a2, int a3)")
+    self:__imp_ProcessFunction("CCSGameRules__TerminateRound", "void (*)(CCSGameRules *this, float delay, int reason, TerminateRoundParams *a4, int a5)")
     self:__imp_ProcessFunction("CGameRulesGameSystem__GameInit", "void (*)(CGameRulesGameSystem *this)")
     g_pGameRules = self:GameRules()
+end
+
+function Hook_TerminateRound(this, delay, reason, a4, a5)
+    print(string.format("Hook_TerminateRound this=%s delay=%s reason=%s", this, delay, reason))
+    return mp.hooks.pfnCCSGameRules__TerminateRound(this, delay, reason, a4, a5)
+end
+
+function Hook_CheckWinConditions(this, a2, a3)
+    print(string.format("Hook_CheckWinConditions this=%s %s %s", this, a2, a3))
+    return mp.hooks.pfnCCSGameRules__CheckWinConditions(this, a2, a3)
+end
+
+local ffi_hook = require("ffi_hook")
+
+function mp:InstallHooks()
+    self.hooks = {}
+    ffi_hook.setffi(ffi)
+    self.hooks.pfnCCSGameRules__TerminateRound = ffi_hook.inline(self.pfnCCSGameRules__TerminateRound, Hook_TerminateRound)
+    self.hooks.pfnCCSGameRules__CheckWinConditions = ffi_hook.inline(self.pfnCCSGameRules__CheckWinConditions, Hook_CheckWinConditions)
 end
 
 return mp
